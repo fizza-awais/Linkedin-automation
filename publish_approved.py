@@ -86,10 +86,14 @@ def add_reaction(message_id: str, emoji: str) -> None:
 
 def publish_to_buffer(text: str) -> dict:
     """
-    Create a post in Buffer using the GraphQL API and publish it now.
+    Create a post in Buffer using the GraphQL API.
 
-    mode: now        -> publish immediately
-    mode: addToQueue -> append to the next queue slot
+    Buffer's API does not support "post now". It either queues the post
+    (mode: addToQueue) for the next slot in your posting schedule,
+    or schedules it for a specific time (mode: customScheduled, dueAt).
+
+    We use addToQueue. To post sooner, configure more frequent queue
+    times in Buffer's settings for the LinkedIn channel.
     """
     if len(text) > LINKEDIN_CHAR_LIMIT:
         raise RuntimeError(
@@ -97,11 +101,15 @@ def publish_to_buffer(text: str) -> dict:
             f"{LINKEDIN_CHAR_LIMIT}. Trim it and react again."
         )
 
+    # Buffer's API only supports addToQueue or customScheduled — there's no
+    # "post immediately" mode. addToQueue puts the post in the next available
+    # slot of your Buffer posting schedule. To post sooner, configure more
+    # frequent queue times in Buffer settings.
     mutation = """
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
         ... on PostActionSuccess {
-          post { id status }
+          post { id status dueAt }
         }
         ... on MutationError {
           message
@@ -114,7 +122,7 @@ def publish_to_buffer(text: str) -> dict:
             "channelId": BUFFER_CHANNEL_ID,
             "text": text,
             "schedulingType": "automatic",
-            "mode": "now",
+            "mode": "addToQueue",
         }
     }
     payload = {"query": mutation, "variables": variables}
