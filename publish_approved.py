@@ -8,6 +8,7 @@ Marks posted messages with a 📤 reaction so they aren't re-posted.
 import os
 import re
 import sys
+import json
 import requests
 
 # ---- Config from environment variables (set as GitHub Secrets) ----
@@ -87,7 +88,7 @@ def publish_to_buffer(text: str) -> dict:
     """
     Create a post in Buffer using the GraphQL API and publish it now.
 
-    mode: now      -> publish immediately
+    mode: now        -> publish immediately
     mode: addToQueue -> append to the next queue slot
     """
     if len(text) > LINKEDIN_CHAR_LIMIT:
@@ -116,15 +117,23 @@ def publish_to_buffer(text: str) -> dict:
             "mode": "now",
         }
     }
-    response = requests.post(
-        BUFFER_GRAPHQL,
-        headers=BUFFER_HEADERS,
-        json={"query": mutation, "variables": variables},
-    )
+    payload = {"query": mutation, "variables": variables}
+
+    print(f"  Sending to Buffer: channelId={BUFFER_CHANNEL_ID}, "
+          f"text length={len(text)}")
+
+    response = requests.post(BUFFER_GRAPHQL, headers=BUFFER_HEADERS, json=payload)
+
+    # Print Buffer's response body before raising, so we can see what's wrong
+    print(f"  Buffer HTTP status: {response.status_code}")
+    print(f"  Buffer response body: {response.text}")
+
     response.raise_for_status()
     data = response.json()
+
     if "errors" in data:
-        raise RuntimeError(f"Buffer API error: {data['errors']}")
+        raise RuntimeError(f"Buffer GraphQL errors: {json.dumps(data['errors'], indent=2)}")
+
     result = data["data"]["createPost"]
     if "message" in result:
         raise RuntimeError(f"Buffer rejected post: {result['message']}")
