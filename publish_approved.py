@@ -148,14 +148,22 @@ def publish_to_buffer(text: str) -> dict:
     return result
 
 
+def has_reaction(message: dict, emoji: str) -> bool:
+    """Check whether a message has any reaction with the given emoji."""
+    return any(
+        r["emoji"]["name"] == emoji
+        for r in message.get("reactions", [])
+    )
+
+
 def main():
     messages = fetch_recent_messages(limit=50)
     print(f"Fetched {len(messages)} recent messages.")
 
     processed = 0
     for message in messages:
-        # Skip messages we've already posted
-        if user_reacted(message, POSTED_EMOJI, "@me"):
+        # Skip messages we've already posted (bot adds 📤 after publishing)
+        if has_reaction(message, POSTED_EMOJI):
             continue
 
         # Only act on messages the user approved
@@ -173,10 +181,23 @@ def main():
         try:
             result = publish_to_buffer(post_text)
             print(f"  Buffer accepted: {result}")
-            add_reaction(message["id"], POSTED_EMOJI)
-            processed += 1
         except Exception as exc:  # noqa: BLE001
             print(f"  Failed to publish: {exc}", file=sys.stderr)
+            continue
+
+        # Mark AFTER a confirmed publish. If this fails the post is already
+        # live, so log loudly — do NOT re-publish on the next run.
+        try:
+            add_reaction(message["id"], POSTED_EMOJI)
+        except Exception as exc:  # noqa: BLE001
+            print(
+                f"  WARNING: published but failed to mark message "
+                f"{message['id']} with {POSTED_EMOJI}: {exc}\n"
+                f"  Manually add {POSTED_EMOJI} to that Discord message "
+                f"to prevent it being re-published.",
+                file=sys.stderr,
+            )
+        processed += 1
 
     print(f"Done. Published {processed} approved post(s).")
 
