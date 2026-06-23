@@ -1,65 +1,69 @@
 # Voice Examples
 
-Paste 3-5 of your own past LinkedIn posts (or any writing samples that sound like you) below.
-The more authentic samples here, the better Claude will match your voice.
-
-If you don't have past LinkedIn posts, just write in your natural voice as if you're
-explaining something to a developer friend over coffee. Replace the placeholders below.
+These are written-in-your-voice reference posts for a full-stack + AI engineer.
+The AI will match this style: conversational, technically specific, a little opinionated, no fluff.
 
 ---
 
-## Example 1
+## Example 1 — Lesson from a real project
 
-After $1M earned and 14,000 hours on Upwork, I've figured out where AI helps and where it fucks you up... 
+Spent two days chasing a bug that turned out to be a timezone offset.
 
-In today's newsletter I break down the 4 ways I actually use AI on the platform:
+The API was returning timestamps in UTC. The frontend was displaying them in local time. Nobody wrote a test for the gap between those two. Everything looked fine in dev because my machine and the server happened to be in the same timezone.
 
-🎯 Refining my profile (and ranking for the right keywords) 
-📝 Summarizing client calls so I can stay present 
-🔍 Estimating jobs and spotting red flags before applying 
-💭 Working through impostor syndrome when I feel like I'm not doing enough
+Shipped it. User in Germany complained their scheduled jobs were firing an hour off. Took me an embarrassingly long time to see it because I kept looking at the wrong layer.
 
-And the one thing I will never again use AI for (you already know).
+The fix was one line. The lesson was to stop assuming UTC == UTC everywhere in a stack that crosses three different services.
 
-=== gabe was here ===
-
-So how are you using AI on UW? And i better not see no comments on using to write proposals lol 
-
-## Example 2
-
-Been building with Claude Code for a while now, and one tool that keeps coming up is 𝗦𝘂𝗽𝗲𝗿𝗽𝗼𝘄𝗲𝗿𝘀 by Prime Radiant 
-
-It just hit 𝟮,𝟬𝟱𝟴 𝘀𝘁𝗮𝗿𝘀 𝘁𝗼𝗱𝗮𝘆 and is 𝘁𝗿𝗲𝗻𝗱𝗶𝗻𝗴 on GitHub. If you haven't heard of it, here's why it matters.
-
-𝗦𝘂𝗽𝗲𝗿𝗽𝗼𝘄𝗲𝗿𝘀 is a spec-driven, skills-based framework that plugs directly into Claude Code. What makes it different:
-
--> It doesn't just start writing code. It first pulls a proper spec out of the conversation.
--> It breaks that spec into an implementation plan clear enough for any engineer to follow.
--> It runs subagent-driven development, agents working through tasks autonomously, reviewing their own work, for hours at a time without going off-track.
--> Skills like TDD, systematic debugging, code review, and git worktrees trigger automatically. You don't have to think about it.
-
-The workflow is: brainstorm -> plan -> build -> review -> ship. And it actually holds the agent to it.
-
-repo: https://lnkd.in/d4phzCva
+Boring bugs are the ones that get you.
 
 ---
 
-## Example 3
+## Example 2 — Hot take / opinion
 
-👾 `hf-mem` is all you need to estimate the required VRAM for inference of any model on Hugging Face based on Safetensors metadata.
+Everyone's talking about which AI coding tool is best. I think that's the wrong question.
 
-- Written in Python
-- Lightweight, only depends on httpx
-- Runs w/ Astral `uvx` as `uvx hf-mem --model-id ...`
-- Works with any Safetensors repository
-- Output inspired by U.S. Graphics Company TR-100 Machine Report
+The real question is: what kind of thinking are you outsourcing?
+
+I've noticed that when I let AI write the boilerplate, I get faster but I also stop noticing when the boilerplate is wrong for the problem. The scaffolding looks right. It compiles. It just doesn't fit what I actually needed.
+
+The engineers I've seen get the most out of AI tools are the ones who treat the output as a first draft from a junior, not a solution from a senior. They're reviewing, questioning, redirecting. Not accepting.
+
+That mental model shift matters more than which tool you pick.
+
+---
+
+## Example 3 — Career / growth reflection
+
+A year ago I would've spent a week building an internal tool from scratch because buying something felt like cheating.
+
+Now I buy first and build only when the off-the-shelf option actually costs more in friction than it saves in time. That crossover point is earlier than I used to think.
+
+The shift wasn't about being lazy. It was about getting clearer on what my actual job is: delivering working software that solves a real problem, not demonstrating that I can wire up an authentication system for the sixth time.
+
+Not sure when that clicked. But it changed how I scope almost everything now.
+
+---
+
+## Example 4 — Tool / framework breakdown
+
+Been using LangChain for a few months and I have opinions.
+
+The abstraction layer makes prototyping fast. You can get a working RAG pipeline in an afternoon. That part is genuinely good.
+
+The problem is what happens when something breaks or behaves unexpectedly. The layers of wrappers mean the error messages are cryptic, the docs lag behind the API, and debugging feels like spelunking. I've spent more time reading LangChain source code than I expected to for a tool that's supposed to make things simpler.
+
+For anything I'm actually shipping, I've been reaching for the raw SDK more. More verbose, more control, less magic I can't explain to myself.
 
 ---
 
 ## Tone notes
 
-- I write conversationally, not corporate
-- I share specific technical details, not vague platitudes
-- I admit when something was hard or when I was wrong
-- I don't use rocket emojis or "🚀 thrilled to announce 🚀" energy
-- I don't use em dashes
+- Conversational, not corporate
+- Share specific technical details and real moments, not vague lessons
+- Opinionated but not preachy
+- Admit when something was hard, wrong, or took longer than it should have
+- No rocket emojis, no "thrilled to announce", no "let's dive in"
+- No em-dashes
+- No hashtag spam (0-2 max, only if they feel completely natural)
+- End on an observation or a specific question, not generic engagement bait like "What do you think?"
