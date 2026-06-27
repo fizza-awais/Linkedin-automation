@@ -40,3 +40,4 @@
 2026-06-24T06:47:40.499216 | One optimization I made that turned out to be in the completely wrong place
 2026-06-25T06:46:17.945727 | Why "just use an LLM for that" is sometimes the laziest answer in the room
 2026-06-26T06:53:58.284207 | The hidden cost of chaining too many AI tools together in one pipeline
+2026-06-27T06:28:03.668216 | A side effect I introduced that didn't show up until production
